@@ -16,8 +16,9 @@ void show_vector(T& vector, std::string name)
 	}
 }
 
+
 template <typename T>
-void	printSize(ft::vector<T> const &vct, bool print_content = true)
+void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true)
 {
 	const size_t size = vct.size();
 	const size_t capacity = vct.capacity();
@@ -29,8 +30,8 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 	std::cout << "max_size: " << vct.max_size() << std::endl;
 	if (print_content)
 	{
-		typename ft::vector<T>::const_iterator it = vct.begin();
-		typename ft::vector<T>::const_iterator ite = vct.end();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator it = vct.begin();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator ite = vct.end();
 		std::cout << std::endl << "Content is:" << std::endl;
 		for (; it != ite; ++it)
 			std::cout << "- " << *it << std::endl;
@@ -38,27 +39,30 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 	std::cout << "###############################################" << std::endl;
 }
 
+//----------------------MAIN-----------------------
 int		main(void)
 {
-	std::list<TESTED_TYPE> lst;
-	std::list<TESTED_TYPE>::iterator lst_it;
-	for (int i = 1; i < 5; ++i)
-		lst.push_back(i * 3);
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(5);
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
+	const int cut = 3;
 
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(lst.begin(), lst.end());
+	for (unsigned long int i = 0; i < vct.size(); ++i)
+		vct[i] = (vct.size() - i) * 7;
 	printSize(vct);
 
-	lst_it = lst.begin();
-	for (int i = 1; lst_it != lst.end(); ++i)
-		*lst_it++ = i * 4;
-	vct.assign(lst.begin(), lst.end());
-	printSize(vct);
-	std::list<TESTED_TYPE> lst2;
-	for (int i = 1; i < 5; ++i)
-		lst2.push_back(i * 5);
-	std::cout << "FINAL STEP" << std::endl;
-	vct.insert(vct.end(), lst2.rbegin(), lst2.rend());
-	printSize(vct);
-	std::cout << "MAIS NAN" << std::endl;
+	vct2.insert(vct2.begin(), vct.begin(), vct.begin() + cut);
+	printSize(vct2);
+	vct2.insert(vct2.begin(), vct.begin() + cut, vct.end());
+	printSize(vct2);
+	vct2.insert(vct2.end(), vct.begin(), vct.begin() + cut);
+	printSize(vct2);
+
+	std::cout << "insert return:" << std::endl;
+
+	std::cout << *vct2.insert(vct2.end(), 42) << std::endl;
+	std::cout << *vct2.insert(vct2.begin() + 5, 84) << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+
+	printSize(vct2);
 	return (0);
 }
