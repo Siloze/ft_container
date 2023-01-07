@@ -294,27 +294,22 @@ namespace ft
 		template <class InputIterator>
 		void insert(iterator position, InputIterator first, InputIterator last) //typename ft::enable_if<!ft::is_integral<InputIterator>::type, InputIterator>::value first
 		{
-			size_t len = 0;
+			size_t len = 0; //longueur entre les 2 iterateurs
 			size_t pos = position - this->begin();
 			for (InputIterator it = first; it != last; it++)
-			{
-				std::cout << "oeoe" << std::endl;
 				len++;
-			}
-			if (this->_size == 0)
+			std::cout << "pos : " << pos << " len : " << len << std::endl;
+			if (!this->_size)
 				this->reserve(1);
 			while (this->_size + len > this->_capacity)
-			{
 				this->reserve(this->_capacity * 2);
-				std::cout << "oeoe2 size :" << this->_size  << " len : " << len << "capacity" << this->_capacity << std::endl;
-			}
-			this->_size += len;
-			position = this->begin() + pos;
-			iterator it = position + len;
-			for (size_t i = 0; i < len; i++)
-				*(it + i) = *(it + i - len);
-			for (InputIterator it = first; it != last; it++)
+			position = this->begin() + pos; //reinitialiser position de la tete decriture
+			iterator it = this->end() + len; //position du commencement du decallage
+			for (size_t i = 0; i < (size_t)(this->end() - position); i++) //decaller le contenue deja existant
+				*(it - i) = *(position + len - i);
+			for (InputIterator it = first; it != last; it++) //generer le contenue
 				*position++ = *it;
+			this->_size += len;
 		}
 
 		iterator erase(iterator position)
