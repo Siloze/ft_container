@@ -149,6 +149,8 @@ namespace ft
 
 		void reserve(size_t n)
 		{
+			if (!n)
+				n = 1;
 			if (n > this->_capacity)
 			{
 				T *tmp = this->_allocator.allocate(n);
@@ -158,6 +160,7 @@ namespace ft
 				this->_data = tmp;
 				this->_capacity = n;
 			}
+
 		};
 
 		bool empty() const
@@ -244,9 +247,7 @@ namespace ft
 
 		void push_back(const T &val)
 		{
-			if (this->_size == 0)
-				this->reserve(1);
-			else if (this->_size == this->_capacity)
+			if (this->_size == this->_capacity)
 				this->reserve(this->_capacity * 2);
 			this->_data[this->_size] = val;
 			this->_size++;
@@ -263,53 +264,51 @@ namespace ft
 
 		iterator insert(iterator position, const T &val)
 		{
+			size_t pos = position - this->begin();
 			if (this->_size == this->_capacity)
 				this->reserve(this->_capacity * 2);
-			iterator it = this->end();
-			while (it != position)
-			{
-				*it = *(it - 1);
-				it--;
-			}
+			iterator it = this->begin() + pos;
+			for (iterator end = this->end(); end != it; end--)
+				*end = *(end - 1);
 			*it = val;
+		(void)val;
 			this->_size++;
-			return position;
+			return it;
 		};
 
 		void insert(iterator position, size_type n, const value_type &val)
 		{
-			while (this->_size + n > this->_capacity)
-				this->reserve(this->_capacity * 2);
-			this->_size += n;
-			iterator it = this->end();
-			while (it != position)
+			size_t pos = position - this->begin();
+			while (n)
 			{
-				*it = *(it - n);
-				it--;
+				insert(this->begin() + pos, val);
+				n--;
 			}
-			for (size_t i = 0; i < n; i++)
-				*(it + i) = val;
 		}
 
 		template <class InputIterator>
-		void insert(iterator position, InputIterator first, InputIterator last) //typename ft::enable_if<!ft::is_integral<InputIterator>::type, InputIterator>::value first
+		void insert(iterator position, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last) //typename ft::enable_if<!ft::is_integral<InputIterator>::type, InputIterator>::value first
 		{
-			size_t len = 0; //longueur entre les 2 iterateurs
+			// size_t len = 0; //longueur entre les 2 iterateurs
+			// size_t pos = position - this->begin();
+			// for (InputIterator it = first; it != last; it++)
+			// 	len++;
+			// std::cout << "pos : " << pos << " len : " << len << std::endl;
+			// while (this->_size + len > this->_capacity)
+			// 	this->reserve(this->_capacity * 2);
+			// position = this->begin() + pos; //reinitialiser position de la tete decriture
+			// iterator it = this->end(); //position du commencement du decallage
+			// for (size_t i = 0; i < (size_t)(this->end() - position); i++) //decaller le contenue deja existant
+			// {
+			// 	std::cout << " I : " << i << std::endl;
+			// 	*(it + i) = *(position + i);
+			// }
+			// for (InputIterator it = first; it != last; it++) //generer le contenue
+			// 	*position++ = *it;
+			// this->_size += len;
 			size_t pos = position - this->begin();
 			for (InputIterator it = first; it != last; it++)
-				len++;
-			std::cout << "pos : " << pos << " len : " << len << std::endl;
-			if (!this->_size)
-				this->reserve(1);
-			while (this->_size + len > this->_capacity)
-				this->reserve(this->_capacity * 2);
-			position = this->begin() + pos; //reinitialiser position de la tete decriture
-			iterator it = this->end() + len; //position du commencement du decallage
-			for (size_t i = 0; i < (size_t)(this->end() - position); i++) //decaller le contenue deja existant
-				*(it - i) = *(position + len - i);
-			for (InputIterator it = first; it != last; it++) //generer le contenue
-				*position++ = *it;
-			this->_size += len;
+				insert(this->begin() + pos, *it);
 		}
 
 		iterator erase(iterator position)
