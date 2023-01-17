@@ -1,6 +1,6 @@
 #ifndef CONST_REVERSE_ITERATOR_HPP
 #define CONST_REVERSE_ITERATOR_HPP
-
+#include "reverse_iterator.hpp"
 namespace ft
 {
 	template <typename T>
@@ -27,6 +27,9 @@ namespace ft
 			const_reverse_iterator operator--(int) { const_reverse_iterator tmp(*this); this->_ptr++; return tmp; };
 			const_reverse_iterator operator+(int n) const { return const_reverse_iterator(this->_ptr - n); };
 			const_reverse_iterator operator-(int n) const { return const_reverse_iterator(this->_ptr + n); };
+            friend const_reverse_iterator operator+(int n, const const_reverse_iterator &it) { return const_reverse_iterator(it._ptr - n); };
+            friend const_reverse_iterator operator-(int n, const const_reverse_iterator &it) { return const_reverse_iterator(it._ptr + n); };
+
 			const_reverse_iterator& operator+=(int n) { this->_ptr -= n; return *this; };
 			const_reverse_iterator& operator-=(int n) { this->_ptr += n; return *this; };
 			long operator+(const const_reverse_iterator &n) const { return this->_ptr + n._ptr; };
